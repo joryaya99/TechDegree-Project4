@@ -43,7 +43,16 @@ def add_product():
     product_quantity = int(input('Enter the product quantity: '))
     product_price_str = input('Enter the price of the product (Ex: 2.99): ')
     product_price = int(float(product_price_str) * 100)
-    # Come back to finish code later
+
+    new_product = Product(
+        product_name = product_name,
+        product_quantity = product_quantity,
+        product_price = product_price,
+        date_updated = datetime.date.today()
+    )
+    session.add(new_product)
+    session.commit()
+    print('The product has successfully been added !')
 
 def view_all_products():
     products = session.query(Product).all()
