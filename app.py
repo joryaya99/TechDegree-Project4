@@ -8,7 +8,7 @@ import time
 def menu():
     while True:
         print('''
-        \nPROGRAMMING BOOKS
+        \nSTORE INVENTORY
         \r1) Add book
         \r2) View all books
         \r3) Search for book
