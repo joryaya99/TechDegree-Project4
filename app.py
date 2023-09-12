@@ -24,22 +24,6 @@ def menu():
         \rPress enter to try again''')
 
 
-def submenu():
-    while True:
-        print('''
-            \n1) Edit
-            \r2) Delete
-            \r3) Return to main menu''')
-        choice = input('What would you like to do ?')
-        if choice in ['1', '2', '3']:
-            return choice
-        else:
-            input('''
-            \rPlease choose one of the options above.
-            \rA number from 1-3
-            \rPress enter to try again''')
-
-
 def clean_date(date_str):
     months = ['January', 'February', 'March', 'April', 'May', 
     'June', 'July', 'August', 'September', 'October', 'November', 'December']
