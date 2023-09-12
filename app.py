@@ -79,7 +79,7 @@ def backup_to_csv():
                 writer.writerow({
                     'product_name': product.product_name,
                     'product_quantity': product.product_quantity,
-                    'product_price': product.product_price / 100.0,  # Convert back to dollars
+                    'product_price': product.product_price / 100.0,
                     'date_updated': product.date_updated.strftime('%Y-%m-%d')
                 })
         print('Backup has been exported to backup.csv')
