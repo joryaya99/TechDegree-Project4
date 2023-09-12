@@ -1,5 +1,5 @@
 from models import (Base, session, 
-Book, engine)
+Product, engine)
 import datetime
 import csv
 import time
