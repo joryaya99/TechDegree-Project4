@@ -1,5 +1,5 @@
 from models import (Base, session, 
-Product, engine)
+Products, engine)
 import datetime
 import csv
 import time
@@ -8,7 +8,7 @@ def clean_date(date_str):
     try:
         date = datetime.datetime.strptime(date_str, '%B %d, %Y').date()
         return date
-    except Value Error:
+    except ValueError:
         print("\n****** DATE ERROR ******")
         print("The date format should be: Month Day, Year (Ex: January 13, 2003)")
         return None
@@ -17,7 +17,7 @@ def clean_price(price_str):
     try:
         price = int(float(price_str) * 100)
         return price
-    except Value Error:
+    except ValueError:
         print("\n****** PRICE ERROR ******")
         print("The price should be a valid number without a currency symbol (Ex: 10.99)")
         return None
@@ -29,7 +29,7 @@ def menu():
         \rV) View all products
         \rA) Add product
         \rB) Backup database
-        \rQ) Quit
+        \rQ) Quit''')
         choice = input('What would you like to do ? ')
         if choice in ['V', 'A', 'B', 'Q']:
             return choice
@@ -44,7 +44,7 @@ def add_product():
     product_price_str = input('Enter the price of the product (Ex: 2.99): ')
     product_price = int(float(product_price_str) * 100)
 
-    new_product = Product(
+    new_product = Products(
         product_name = product_name,
         product_quantity = product_quantity,
         product_price = product_price,
@@ -55,7 +55,7 @@ def add_product():
     print('The product has successfully been added !')
 
 def view_all_products():
-    products = session.query(Product).all()
+    products = session.query(Products).all()
     if products:
         print('\nAll Products:')
         for product in products:
@@ -69,7 +69,7 @@ def view_all_products():
         print('\nThere are no products in the database at the moment.')
 
 def backup_to_csv():
-    products = session.query(Product).all()
+    products = session.query(Products).all()
     if products:
         with open('backup.csv', 'w', newline='') as csvfile:
             fieldnames = ['product_name', 'product_quantity', 'product_price', 'date_updated']
