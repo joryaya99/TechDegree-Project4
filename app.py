@@ -4,6 +4,43 @@ import datetime
 import csv
 import time
 
+Base.metadata.create_all(engine)
+
+
+
+def read_csv(filename = 'inventory.csv'):
+    products_list = []
+    with open(filename, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            product = {
+                'product_name': row['product_name'],
+                'product_quantity': int(row['product_quantity']),
+                'product_price': clean_price(row['product_price']),
+                'date_updated': clean_date(row['date_updated'])
+            }
+            products_list.append(product)
+    return products_list
+
+
+
+def add_products_from_csv():
+    products = read_csv()
+    for product in products:
+        new_product = Products(
+            product_name = product['product_name'],
+            product_quantity = product['product_quantity'],
+            product_price = product['product_price'],
+            date_updated = product['date_updated']
+        )
+        session.add(new_product)
+    session.commit()
+
+
+if __name__ == '__main__':
+    add_products_from_csv()
+    main()
+
 def clean_date(date_str):
     try:
         date = datetime.datetime.strptime(date_str, '%B %d, %Y').date()
@@ -15,6 +52,7 @@ def clean_date(date_str):
 
 def clean_price(price_str):
     try:
+        price_str = price_str.replace(',', '')
         price = int(float(price_str) * 100)
         return price
     except ValueError:
