@@ -1,27 +1,50 @@
-from models import (Base, session, 
-Products, engine)
 import datetime
 import csv
 import time
+from threading import main_thread
+from models import Base, session, Products, engine
+
 
 Base.metadata.create_all(engine)
 
 
+def clean_date(date_str):
+    try:
+        date = datetime.datetime.strptime(date_str, '%B %d, %Y').date()
+        return date
+    except ValueError:
+        print("\n****** DATE ERROR ******")
+        print("The date format should be: Month Day, Year (Ex: January 13, 2003)")
+        return None
+    
+def clean_price(price_str):
+    try:
+        price_str = price_str.replace(',', '')
+        price = int(float(price_str) * 100)
+        return price
+    except ValueError:
+        print("\n****** PRICE ERROR ******")
+        print("The price should be a valid number without a currency symbol (Ex: 10.99)")
+        return None
 
-def read_csv(filename = 'inventory.csv'):
+def read_csv(filename='inventory.csv'):
     products_list = []
     with open(filename, 'r') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            product = {
-                'product_name': row['product_name'],
-                'product_quantity': int(row['product_quantity']),
-                'product_price': clean_price(row['product_price']),
-                'date_updated': clean_date(row['date_updated'])
-            }
-            products_list.append(product)
+            try:
+                product = {
+                    'product_name': row['product_name'],
+                    'product_quantity': int(row.get('product_quantity', 0)),
+                    'product_price': clean_price(row['product_price'].strip()),  # Remove leading and trailing spaces
+                    'date_updated': clean_date(row['date_updated'])
+                }
+                products_list.append(product)
+            except KeyError as e:
+                print(f"KeyError: {e} in CSV row, skipping the row.")
+                print(f"Problematic row: {row}")
+                continue  # Skip the row with missing 'product_price'
     return products_list
-
 
 
 def add_products_from_csv():
@@ -39,26 +62,8 @@ def add_products_from_csv():
 
 if __name__ == '__main__':
     add_products_from_csv()
-    main()
+    main_thread()
 
-def clean_date(date_str):
-    try:
-        date = datetime.datetime.strptime(date_str, '%B %d, %Y').date()
-        return date
-    except ValueError:
-        print("\n****** DATE ERROR ******")
-        print("The date format should be: Month Day, Year (Ex: January 13, 2003)")
-        return None
-
-def clean_price(price_str):
-    try:
-        price_str = price_str.replace(',', '')
-        price = int(float(price_str) * 100)
-        return price
-    except ValueError:
-        print("\n****** PRICE ERROR ******")
-        print("The price should be a valid number without a currency symbol (Ex: 10.99)")
-        return None
 
 def menu():
     while True:
