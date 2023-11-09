@@ -11,7 +11,7 @@ Base.metadata.create_all(engine)
 def clean_price(price_str):
     try:
         # Remove commas and spaces, and then convert to a float
-        price_str = price_str.replace(',', '').strip()
+        price_str = price_str.replace('$', '').replace(',', '').strip()
         price = int(float(price_str) * 100)
         return price
     except ValueError:
