@@ -89,12 +89,12 @@ def menu():
     while True:
         print('''
         \nSTORE INVENTORY MANAGEMENT
-        \rV) View all products
+        \rV) View product
         \rA) Add product
         \rB) Backup database
         \rQ) Quit''')
-        choice = input('What would you like to do ? ')
-        if choice in ['V', 'A', 'B', 'Q']:
+        choice = input('What would you like to do? ')
+        if choice in ['V', 'S', 'A', 'B', 'Q']:
             return choice
         else:
             input('''
@@ -102,10 +102,27 @@ def menu():
               \rPress Enter to try again''')
 
 def add_product():
-    product_name = input('Enter the product name: ')
-    product_quantity = int(input('Enter the product quantity: '))
-    product_price_str = input('Enter the price of the product (Ex: 2.99): ')
-    product_price = int(float(product_price_str) * 100)
+    while True:
+        product_name = input('Enter the product name: ')
+        if product_name:
+            break
+        else:
+            print('Product name cannot be empty. Please try again.')
+
+    while True:
+        try:
+            product_quantity = int(input('Enter the product quantity: '))
+            break
+        except ValueError:
+            print('Invalid input for quantity. Please enter a valid number.')
+
+    while True:
+        product_price_str = input('Enter the price of the product (Ex: 2.99): ')
+        try:
+            product_price = int(float(product_price_str) * 100)
+            break
+        except ValueError:
+            print('Invalid input for price. Please enter a valid number (Ex: 2.99).')
 
     new_product = Products(
         product_name = product_name,
@@ -115,21 +132,24 @@ def add_product():
     )
     session.add(new_product)
     session.commit()
-    print('The product has successfully been added !')
+    print('The product has been sucessfully added !')
 
-def view_all_products():
-    products = session.query(Products).all()
-    if products:
-        print('\nAll Products:')
-        for product in products:
+def view_product():
+    product_id = input('Enter the product ID to view: ')
+    try:
+        product_id = int(product_id)
+        product = session.query(Products).filter_by(product_id=product_id).first()
+        if product:
+            print('\nProduct Details:')
             print(f'Product ID: {product.product_id}')
             print(f'Product Name: {product.product_name}')
             print(f'Product Quantity: {product.product_quantity}')
             print(f'Product Price: ${product.product_price / 100:.2f}')
             print(f'Date Updated: {product.date_updated.strftime("%Y-%m-%d")}')
-            print('-' * 30)
-    else:
-        print('\nThere are no products in the database at the moment.')
+        else:
+            print(f'Product with ID {product_id} not found.')
+    except ValueError:
+        print('Invalid input. Please enter a valid product ID.')
 
 def backup_to_csv():
     products = session.query(Products).all()
@@ -153,7 +173,7 @@ def main():
     while True:
         choice = menu()
         if choice == 'V':
-            view_all_products()
+            view_product()
         elif choice == 'A':
             add_product()
         elif choice == 'B':
